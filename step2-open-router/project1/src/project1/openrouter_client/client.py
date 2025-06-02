@@ -4,7 +4,6 @@ import requests
 import json
 from dotenv import load_dotenv
 
-# Load .env file
 load_dotenv()
 
 nest_asyncio.apply()
@@ -13,6 +12,7 @@ nest_asyncio.apply()
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 BASE_URL = "https://openrouter.ai/api/v1"
 MODEL = "mistralai/devstral-small"
+
 
 def chat_with_openrouter(prompt: str) -> str:
     response = requests.post(
