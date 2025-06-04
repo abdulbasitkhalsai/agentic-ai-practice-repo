@@ -1,7 +1,5 @@
 import os
 from dotenv import load_dotenv
-import os
-from dotenv import load_dotenv
 from agents import Agent, Runner, AsyncOpenAI, OpenAIChatCompletionsModel
 from agents.run import RunConfig
 import asyncio
@@ -39,13 +37,10 @@ async def main():
         instructions="You are helpful Assistent.",
         model=model
     )
-
-    result = await Runner.run(agent, "Tell me about recursion in programming.", run_config=config)
+    user_prompt = input("What do you want to ask from LLM? ")
+    result = await Runner.run(agent, user_prompt , run_config=config)
     print(result.final_output)
-    # Function calls itself,
-    # Looping in smaller pieces,
-    # Endless by design.
-
+    print("Thank you for using LLM!")
 
 if __name__ == "__main__":
     asyncio.run(main())
