@@ -32,10 +32,7 @@ async def main():
         name="Travel Advisor",
         instructions="You are helpful Travel Advisor"
     )
-    # agent = Agent(
-    #     name="Assistant",
-    #     instructions="You are helpful Assistant"
-    # )
+
     user_input = input("What do you want to ask from Travel Advisor? ")
     result = await Runner.run(agent, user_input, run_config=config)
     print(result.final_output)
