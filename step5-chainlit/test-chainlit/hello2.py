@@ -1,0 +1,58 @@
+import chainlit as cl
+import os
+from agents import Agent, AsyncOpenAI, Runner, OpenAIChatCompletionsModel
+from agents.run import RunConfig
+from dotenv import load_dotenv
+
+gemini_api_key = os.getenv("GEMINI_API_KEY")
+
+if gemini_api_key is None:
+    raise ValueError("GEMINI_API_KEY is not set")
+
+external_client = AsyncOpenAI(
+    api_key= gemini_api_key,
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+)
+
+model = OpenAIChatCompletionsModel(
+    model = "gemini-2.0-flash",
+    openai_client=external_client
+)
+
+config = RunConfig(
+    model = model,
+    model_provider= external_client,
+    tracing_disabled = True
+)
+
+agent = Agent(
+    name = "Assistant",
+    instructions="You are helpful Assistant"
+)
+
+@cl.on_chat_start
+async def handle_chat_start():
+    cl.user_session.set("history", [])
+    await cl.Message(content="Welcome to the Panaversity Chatbot!, How may I help you?").send()
+
+@cl.on_message
+async def handle_message(message : cl.Message):
+    history = cl.user_session.get("history")
+    history.append({
+        "role" : "user",
+        "content": message.content
+    })
+    result = await Runner.run_streamed(
+        agent,
+        history,
+        run_config=config
+    )
+    async for event in result.stream_events():
+        await cl.Message(content=event.data).send()
+    # history.append({
+    #     "role" : "assistant",
+    #     "content": result.final_output
+    # })
+    # cl.user_session.set("history", history)
+    await cl.Message(content=result.final_output).send()
+    
