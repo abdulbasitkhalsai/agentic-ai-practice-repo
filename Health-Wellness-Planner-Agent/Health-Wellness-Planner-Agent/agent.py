@@ -1,3 +1,7 @@
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "src")))
 from agents import Agent
 from config.agent.base_client import model, external_client
 from specialized_agents.escalation_agent import escalation_agent
@@ -20,3 +24,7 @@ def create_triage_agent():
         Never respond to queries yourself. Route all queries based on relevance only.""",
         handoffs=[escalation_agent, nutrition_agent, injury_support_agent, general_assistant_agent]
     )
+
+
+# from specialized_agents.escalation_agent import s
+# print(s)

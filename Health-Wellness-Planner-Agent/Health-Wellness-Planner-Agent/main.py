@@ -1,3 +1,8 @@
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "src")))
+
 import asyncio
 import chainlit as cl
 from agents import Runner, Agent
@@ -10,7 +15,7 @@ from typing import cast
 async def handle_chat_start():
     agent = create_triage_agent()
     config = create_run_config()
-    
+
     cl.user_session.set("chat_history", [])
     cl.user_session.set("agent", agent)
     cl.user_session.set("config", config)
@@ -20,7 +25,6 @@ async def handle_chat_start():
 @cl.on_message
 async def handle_message(message: cl.Message):
     history = cl.user_session.get("chat_history") or []
-    print(f"history before append {history}")
     history.append({"role": "user", "content" : message.content})
     msg = cl.Message(content = "")
     await msg.send()
@@ -33,12 +37,12 @@ async def handle_message(message: cl.Message):
                 token = event.data.delta
                 # Skip function call argument deltas
                 if getattr(event.data, "type", "") == "response.function_call_arguments.delta":
-                    print("Skipping function call delta:", token)
+                    # print("Skipping function call delta:", token)
                     continue
+                await asyncio.sleep(0.01)  
                 await msg.stream_token(token)
         history.append({"role": "assistant", "content": msg.content})
         cl.user_session.set("chat_history", history)
     
     except Exception as e:
         await msg.update(content=f"Error: {str(e)}")
-
