@@ -7,3 +7,11 @@ def create_run_config():
     model_provider = external_client,
     tracing_disabled = True
     )
+
+
+# For Guardrail:
+config = RunConfig(
+    model = model,
+    model_provider= external_client,
+    tracing_disabled= True
+)

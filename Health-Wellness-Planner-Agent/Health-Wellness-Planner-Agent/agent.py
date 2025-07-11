@@ -9,6 +9,8 @@ from specialized_agents.nutrition_expert_agent import nutrition_agent
 from specialized_agents.injury_support_agent import injury_support_agent
 from specialized_agents.general_assistant_agent import general_assistant_agent
 from specialized_agents.planner_agent import planner_agent
+from guardrails.health_guardrails import health_guardrail
+from agents import InputGuardrail
 
 
 def create_triage_agent():
@@ -23,5 +25,8 @@ def create_triage_agent():
         If no agent is a good match (e.g., the query is too general, simple, or unrelated), hand it off to the General Assistant Agent — which is listed at the end of your handoff list.
 
         Never respond to queries yourself. Route all queries based on relevance only.""",
-        handoffs=[escalation_agent, nutrition_agent, injury_support_agent, general_assistant_agent, planner_agent]
+        handoffs=[escalation_agent, nutrition_agent, injury_support_agent, general_assistant_agent, planner_agent],
+        input_guardrails=[
+            InputGuardrail(guardrail_function= health_guardrail)
+        ]
     )

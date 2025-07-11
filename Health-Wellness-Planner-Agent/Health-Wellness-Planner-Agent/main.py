@@ -10,6 +10,8 @@ from agent import create_triage_agent
 from config.agent.session_config import create_run_config
 from agents.run import RunConfig
 from typing import cast
+from agents.exceptions import InputGuardrailTripwireTriggered
+from specialized_agents.fallback_agent import fallback_agent
 
 @cl.on_chat_start
 async def handle_chat_start():
@@ -43,6 +45,10 @@ async def handle_message(message: cl.Message):
                 await msg.stream_token(token)
         history.append({"role": "assistant", "content": msg.content})
         cl.user_session.set("chat_history", history)
-    
+    except InputGuardrailTripwireTriggered:
+        # Run fallback agent
+        fallback_response = Runner.run_sync(fallback_agent, history , run_config=config)
+        await cl.Message(content=fallback_response.final_output).send()
+        print(f"\n⚠️ Fallback response to: {fallback_response.final_output}\n") 
     except Exception as e:
         await msg.update(content=f"Error: {str(e)}")
