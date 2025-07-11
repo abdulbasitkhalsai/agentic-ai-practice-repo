@@ -16,7 +16,6 @@ health_guardrail_agent = Agent(
 
 
 async def health_guardrail(ctx, agent, input_data):
-    print(f"Health guardrail activated")
     result = Runner.run_sync(health_guardrail_agent, input_data, run_config=config, context=ctx.context)
     final_output = result.final_output_as(health_output)
     return GuardrailFunctionOutput(

@@ -1,3 +1,8 @@
+# import sys
+# import os
+
+# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "src")))
+
 from agents import Agent
 from tools.goal_analyzer import goal_analyzer
 from tools.meal_planner import meal_planner
@@ -7,7 +12,12 @@ from tools.tracker import progress_tracker
 from specialized_agents.nutrition_expert_agent import nutrition_agent
 from specialized_agents.injury_support_agent import injury_support_agent
 from specialized_agents.escalation_agent import escalation_agent
-from specialized_agents.general_assistant_agent import general_assistant_agent
+# from specialized_agents.general_assistant_agent import general_assistant_agent
+
+from config.agent.base_client import model, external_client
+from guardrails.health_guardrails import health_guardrail
+from agents import InputGuardrail
+
 
 planner_agent = Agent(
     name="PlannerAgent",
@@ -34,7 +44,10 @@ You are the Health & Wellness Planner Agent. Your job is to guide users toward t
         nutrition_agent,
         injury_support_agent,
         escalation_agent,
-        general_assistant_agent
-    ]
+        # general_assistant_agent
+    ],
+    input_guardrails=[
+            InputGuardrail(guardrail_function= health_guardrail)
+        ]
 )
 
